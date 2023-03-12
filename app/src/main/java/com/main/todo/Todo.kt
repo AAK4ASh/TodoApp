@@ -1,3 +1,3 @@
 package com.main.todo
 
-data class Todo( val todo:String,var isChecked:Boolean= false,val id:String)
+data class Todo( val todoName:String,var isChecked:Boolean= false,val id:String)

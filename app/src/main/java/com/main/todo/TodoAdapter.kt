@@ -5,6 +5,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import kotlinx.android.synthetic.main.recycler_task_item.view.*
+
 //adapter class to bind data with UI
 class TodoAdapter (private val todos:MutableList<Todo>):
     RecyclerView.Adapter<TodoAdapter.TodoViewHolder>() { //each of the column in the RV is view-holder
@@ -15,11 +17,20 @@ class TodoAdapter (private val todos:MutableList<Todo>):
     }
     override fun getItemCount(): Int {
 return todos.size   }
+
     override fun onBindViewHolder(holder: TodoViewHolder, position: Int) {
         val currentTodo =todos.get(position)
         holder.itemView.apply {
+            textView.text = currentTodo.todoName
+            checkbox.isChecked= currentTodo.isChecked
+
+
+
         }
 
+    }
+         fun addTodo(todo: Todo) {
+             todos.add(todo)
     }
 
 
