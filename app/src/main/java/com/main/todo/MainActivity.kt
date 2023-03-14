@@ -45,8 +45,7 @@ showInputDialog()
         val list= mutableListOf<Todo>()
         for (i in 0 until array.length()){
         val jsonObject= array.get(i)as?JSONObject //as? used to handle cases where the retrieved object is not a JSONObject
-            jsonObject.let {
-                val model = Gson().fromJson<Todo>(it.toString(),Todo::class.java)
+             jsonObject.let { val model = Gson().fromJson<Todo>(it.toString(),Todo::class.java)
                 list.add(model)
             }
         }
