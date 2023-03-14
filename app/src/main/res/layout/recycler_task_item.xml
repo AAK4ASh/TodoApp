@@ -8,7 +8,7 @@
 
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/taskName"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="12dp"

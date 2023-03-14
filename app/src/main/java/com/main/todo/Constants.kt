@@ -1,8 +1,6 @@
 package com.main.todo
 
-class Constants {
-    companion object{
-        val PREF_NAME= "taskName"
-        val PREF_ARRAY =" TodoAdapter"
-     }
+object Constants {
+    val PREF_NAME= "taskPref"
+    val PREF_ARRAY= "prefArray"
 }
