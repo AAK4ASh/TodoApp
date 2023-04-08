@@ -6,14 +6,14 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.main.todo.Constants.PREF_ARRAY
-import com.main.todo.Constants.PREF_NAME
+import com.main.todo.Constants.Companion.PREF_ARRAY
+import com.main.todo.Constants.Companion.PREF_NAME
 import com.main.todo.databinding.RecyclerTaskItemBinding
 import org.json.JSONArray
 import org.json.JSONObject
 
 //adapter class to bind data with UI
-class TodoAdapter(private val todos: MutableList<Todo>):
+class TodoAdapter(private val  context: Context,private val todos: MutableList<Todo>):
 
     RecyclerView.Adapter<TodoAdapter.TodoViewHolder>() { //each of the column in the RV is view-holder
     inner class  TodoViewHolder(private val binding: RecyclerTaskItemBinding):RecyclerView.ViewHolder(binding.root){
@@ -37,9 +37,27 @@ return todos.size   }
             checkBox.setOnCheckedChangeListener { _, isChecked ->
                 toggleStrikeThrough(taskName, isChecked)
                 currentTodo.isChecked = !currentTodo.isChecked
+                updateLocalData(currentTodo,isChecked)
 
             }
 
+        }
+
+    }
+    private fun updateLocalData(currenTodo: Todo,isChecked: Boolean){
+        val sharedPref=context.getSharedPreferences(PREF_NAME,Context.MODE_PRIVATE)
+        val existingArray=sharedPref.getString(PREF_ARRAY,"[]")?:"[]"
+        val array=JSONArray(existingArray)
+        val newArray=JSONArray()
+        for (i in 0 until array.length()){
+            val json =(array.get(i)as?String)?.let { JSONObject(it) }
+            val currentItemId = json?.getString("id")
+            if (currentItemId==currenTodo.id){
+                json?.let { newArray.put(json.toString()) }
+            }
+            val editor= sharedPref.edit()
+            editor.putString(PREF_ARRAY,newArray.toString())
+            editor.apply()
         }
 
     }
@@ -53,11 +71,16 @@ return todos.size   }
         }
 
     }
+    fun deleteDoneTodos(todo: Todo){
+        todos.removeAll{todo ->
+            todo.isChecked
+        }
+        notifyDataSetChanged()
+    }
 
     fun addTodo(todo: Todo) {
              todos.add(todo)
              notifyItemInserted(todos.size-1)
     }
-
-
 }
+
