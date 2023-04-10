@@ -1,7 +1,6 @@
 package com.main.todo
 
 
-import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.EditText
@@ -15,7 +14,6 @@ import com.main.todo.databinding.ActivityMainBinding
 import org.json.JSONArray
 import org.json.JSONObject
 import java.text.SimpleDateFormat
-import java.time.LocalDate
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
@@ -30,10 +28,11 @@ class MainActivity : AppCompatActivity() {
         val view = binding.root
         setContentView(view)
         initUI()
+
     }
 
     private fun initUI() {
-        getAllTasks()
+       getAllTasks()
         currentDate()
         binding.floatingActionButton.setOnClickListener{
 showInputDialog()
@@ -42,7 +41,7 @@ showInputDialog()
 
 
     private fun getAllTasks() {
-        val sharedPreferences= getSharedPreferences(PREF_ARRAY, MODE_PRIVATE)
+        val sharedPreferences= getSharedPreferences(PREF_NAME, MODE_PRIVATE)
         val existingArray = sharedPreferences.getString(PREF_ARRAY,"[]")?:"[]"//a ternary operator
         val array = JSONArray(existingArray) //array to json array
         val list= mutableListOf<Todo>()
@@ -57,7 +56,7 @@ showInputDialog()
                 list.add(model)
             }
         }
-  todoAdapter= TodoAdapter(list)  //instantiate TodoAdapter
+  todoAdapter= TodoAdapter(list,this)  //instantiate TodoAdapter
         binding.recyclerTasks.layoutManager=LinearLayoutManager(this)//linearlayout manager
         binding.recyclerTasks.adapter= todoAdapter  //set the adapter of recycler view
     }

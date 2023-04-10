@@ -5,6 +5,8 @@ import android.graphics.Paint.STRIKE_THRU_TEXT_FLAG
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
+import androidx.core.os.persistableBundleOf
 import androidx.recyclerview.widget.RecyclerView
 import com.main.todo.Constants.Companion.PREF_ARRAY
 import com.main.todo.Constants.Companion.PREF_NAME
@@ -13,12 +15,23 @@ import org.json.JSONArray
 import org.json.JSONObject
 
 //adapter class to bind data with UI
-class TodoAdapter(private val  context: Context,private val todos: MutableList<Todo>):
+class TodoAdapter(private val todos: MutableList<Todo>, private val context: Context):
 
     RecyclerView.Adapter<TodoAdapter.TodoViewHolder>() { //each of the column in the RV is view-holder
     inner class  TodoViewHolder(private val binding: RecyclerTaskItemBinding):RecyclerView.ViewHolder(binding.root){
         val taskName = binding.taskName
         val checkBox = binding.checkbox
+        private val viewHolder= binding.viewHolder
+        init {
+            viewHolder.setOnClickListener(){
+                val task= todos[layoutPosition]
+                val builder=AlertDialog.Builder(context)
+                builder.setCancelable(true)
+                builder.setNegativeButton("Delete"){_,_ ->
+                deleteDoneTodos(task)
+                }
+            }
+        }
     }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TodoViewHolder {
         val binding= RecyclerTaskItemBinding.inflate(LayoutInflater.from(parent.context),parent,false)
@@ -37,14 +50,15 @@ return todos.size   }
             checkBox.setOnCheckedChangeListener { _, isChecked ->
                 toggleStrikeThrough(taskName, isChecked)
                 currentTodo.isChecked = !currentTodo.isChecked
-                updateLocalData(currentTodo,isChecked)
+                updateLocalData(currentTodo, isChecked)
+
 
             }
 
         }
 
     }
-    private fun updateLocalData(currenTodo: Todo,isChecked: Boolean){
+    private fun updateLocalData(currentTodo: Todo,isChecked: Boolean){
         val sharedPref=context.getSharedPreferences(PREF_NAME,Context.MODE_PRIVATE)
         val existingArray=sharedPref.getString(PREF_ARRAY,"[]")?:"[]"
         val array=JSONArray(existingArray)
@@ -52,7 +66,7 @@ return todos.size   }
         for (i in 0 until array.length()){
             val json =(array.get(i)as?String)?.let { JSONObject(it) }
             val currentItemId = json?.getString("id")
-            if (currentItemId==currenTodo.id){
+            if (currentItemId==currentTodo.id){
                 json?.let { newArray.put(json.toString()) }
             }
             val editor= sharedPref.edit()
@@ -71,7 +85,7 @@ return todos.size   }
         }
 
     }
-    fun deleteDoneTodos(todo: Todo){
+  fun deleteDoneTodos(todo: Todo){
         todos.removeAll{todo ->
             todo.isChecked
         }
