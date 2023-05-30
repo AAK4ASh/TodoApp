@@ -11,6 +11,7 @@ import com.google.gson.Gson
 import com.main.todo.Constants.Companion.PREF_ARRAY
 import com.main.todo.Constants.Companion.PREF_NAME
 import com.main.todo.databinding.ActivityMainBinding
+import com.main.todo.databinding.RecyclerTaskItemBinding
 import org.json.JSONArray
 import org.json.JSONObject
 import java.text.SimpleDateFormat
@@ -19,6 +20,7 @@ import java.util.*
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+    private lateinit var bind:RecyclerTaskItemBinding
     private lateinit var todoAdapter: TodoAdapter
 
 
@@ -28,8 +30,22 @@ class MainActivity : AppCompatActivity() {
         val view = binding.root
         setContentView(view)
         initUI()
+        deleteBtn()
 
     }
+
+    private fun deleteBtn() {
+
+            bind.viewHolder.setOnClickListener{
+                val task= mutableListOf(todoAdapter).get(0)
+                val builder=AlertDialog.Builder(this)
+                builder.setCancelable(true)
+                builder.setNegativeButton("Delete"){_,_ ->
+                    todoAdapter.deleteDoneTodos(todo )
+                }
+            }
+        }
+
 
     private fun initUI() {
        getAllTasks()

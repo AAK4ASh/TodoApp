@@ -5,8 +5,6 @@ import android.graphics.Paint.STRIKE_THRU_TEXT_FLAG
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.appcompat.app.AlertDialog
-import androidx.core.os.persistableBundleOf
 import androidx.recyclerview.widget.RecyclerView
 import com.main.todo.Constants.Companion.PREF_ARRAY
 import com.main.todo.Constants.Companion.PREF_NAME
@@ -22,16 +20,7 @@ class TodoAdapter(private val todos: MutableList<Todo>, private val context: Con
         val taskName = binding.taskName
         val checkBox = binding.checkbox
         private val viewHolder= binding.viewHolder
-        init {
-            viewHolder.setOnClickListener(){
-                val task= todos[layoutPosition]
-                val builder=AlertDialog.Builder(context)
-                builder.setCancelable(true)
-                builder.setNegativeButton("Delete"){_,_ ->
-                deleteDoneTodos(task)
-                }
-            }
-        }
+
     }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TodoViewHolder {
         val binding= RecyclerTaskItemBinding.inflate(LayoutInflater.from(parent.context),parent,false)
@@ -67,7 +56,7 @@ return todos.size   }
             val json =(array.get(i)as?String)?.let { JSONObject(it) }
             val currentItemId = json?.getString("id")
             if (currentItemId==currentTodo.id){
-                json?.let { newArray.put(json.toString()) }
+                json.let { newArray.put(json.toString()) }
             }
             val editor= sharedPref.edit()
             editor.putString(PREF_ARRAY,newArray.toString())
